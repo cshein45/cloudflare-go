@@ -1,208 +1,137 @@
 # Changelog
 
-## 6.10.0 (2026-04-23)
+## 7.0.0 (2026-04-30)
 
-Full Changelog: [v6.9.0...v6.10.0](https://github.com/cloudflare/cloudflare-go/compare/v6.9.0...v6.10.0)
+Full Changelog: [v6.10.0...v7.0.0](https://github.com/cloudflare/cloudflare-go/compare/v6.10.0...v7.0.0)
 
-In this release, you'll see a number of breaking changes. This is primarily due to changes in OpenAPI definitions, which our libraries are based off of, and codegen updates that we rely on to read those OpenAPI definitions and produce our SDK libraries.
+This is a major version release that includes breaking changes to three packages: `ai_search`, `email_security`, and `workers`. These changes reflect upstream API specification updates that improve type correctness and consistency. Non-breaking features and updates are also included across several other packages.
 
-## Please ensure you read through the list of changes below before moving to this version - this will help you understand any down or upstream issues it may cause to your environments.
-
----
-
-## Breaking Changes
-
-See the [v6.10.0 Migration Guide](./docs/migration-guides/v6.10.0-migration-guide.md) for before/after code examples and actions needed for each change.
-
-### Abuse Reports - Registrar WHOIS Report Field Removals
-
-Several fields have been removed from `AbuseReportNewParamsBodyAbuseReportsRegistrarWhoisReportRegWhoRequest`:
-
-- `RegWhoGoodFaithAffirmation`
-- `RegWhoLawfulProcessingAgreement`
-- `RegWhoLegalBasis`
-- `RegWhoRequestType`
-- `RegWhoRequestedDataElements`
-
-### AI Search - Instance Params Restructured
-
-The `InstanceNewParams` and `InstanceUpdateParams` types have been significantly restructured. Many fields have been moved or removed:
-
-- `InstanceNewParams.TokenID`, `Type`, `CreatedFromAISearchWizard`, `WorkerDomain` removed
-- `InstanceUpdateParams` — most configuration fields removed (including `IndexMethod`, `IndexingOptions`, `MaxNumResults`, `Metadata`, `Paused`, `PublicEndpointParams`, `Reranking`, `RerankingModel`, `RetrievalOptions`, `RewriteModel`, `RewriteQuery`, `ScoreThreshold`, `SourceParams`, `Summarization`, `SummarizationModel`, `SystemPromptAISearch`, `SystemPromptIndexSummarization`, `SystemPromptRewriteQuery`, `TokenID`, `CreatedFromAISearchWizard`, `WorkerDomain`)
-- `InstanceSearchParams.Messages` field removed along with `InstanceSearchParamsMessage` and `InstanceSearchParamsMessagesRole` types
-
-### AI Search - InstanceItem Service Removed
-
-The `InstanceItemService` type has been removed. The items sub-resource at `client.AISearch.Instances.Items` no longer exists in the non-namespace path. Use `client.AISearch.Namespaces.Instances.Items` instead.
-
-### AI Search - Token Types Removed
-
-The following types have been removed from the `ai_search` package:
-
-- `TokenDeleteResponse`
-- `TokenListParams` (and associated `TokenListParamsOrderBy`, `TokenListParamsOrderByDirection`)
-
-### Email Security - Investigate Move Return Type Change
-
-The `Investigate.Move.New()` method now returns a raw slice instead of a paginated wrapper:
-
-- `New()` returns `*[]InvestigateMoveNewResponse` instead of `*pagination.SinglePage[InvestigateMoveNewResponse]`
-- `NewAutoPaging()` method removed
-
-### Hyperdrive - Config Params Restructured
-
-The `ConfigEditParams` type lost its `MTLS` and `Name` fields. The `HyperdriveMTLSParam` type lost `MTLS` and `Host` fields. The `Host` field on origin config changed from `param.Field[string]` to a plain `string`.
-
-### IAM - UserGroupMember Params and Return Types Changed
-
-The `UserGroupMemberNewParams` struct has been restructured and the `New()` method now returns a paginated response:
-
-- `UserGroupMemberNewParams.Body` renamed to `UserGroupMemberNewParams.Members`
-- `UserGroupMemberNewParamsBody` renamed to `UserGroupMemberNewParamsMember`
-- `UserGroupMemberUpdateParams.Body` renamed to `UserGroupMemberUpdateParams.Members`
-- `UserGroupMemberUpdateParamsBody` renamed to `UserGroupMemberUpdateParamsMember`
-- `UserGroups.Members.New()` returns `*pagination.SinglePage[UserGroupMemberNewResponse]` instead of `*UserGroupMemberNewResponse`
-
-### IAM - UserGroup List Direction Type Changed
-
-The `UserGroupListParams.Direction` field changed from `param.Field[string]` to `param.Field[UserGroupListParamsDirection]` (typed enum with `asc`/`desc` values).
-
-### Pipelines - Delete Methods Now Return Typed Responses
-
-Several delete methods across Pipelines now return typed responses instead of bare `error`:
-
-- `Pipelines.DeleteV1()` returns `(*PipelineDeleteV1Response, error)` instead of `error`
-- `Pipelines.Sinks.Delete()` returns `(*SinkDeleteResponse, error)` instead of `error`
-- `Pipelines.Streams.Delete()` returns `(*StreamDeleteResponse, error)` instead of `error`
-
-### Queues - Message Response Types Removed
-
-The following response envelope types have been removed:
-
-- `MessageBulkPushResponseSuccess`
-- `MessagePushResponseSuccess`
-- `MessageAckResponse` fields `RetryCount` and `Warnings` removed
-
-### Secrets Store - Pagination Wrapper Removal and Type Changes
-
-Methods now return direct types instead of `SinglePage` wrappers, and several internal types have been removed. Associated `AutoPaging` methods have also been removed:
-
-- `Stores.New()` returns `*StoreNewResponse` instead of `*pagination.SinglePage[StoreNewResponse]`
-- `Stores.NewAutoPaging()` method removed
-- `Stores.Secrets.BulkDelete()` returns `*StoreSecretBulkDeleteResponse` instead of `*pagination.SinglePage[StoreSecretBulkDeleteResponse]`
-- `Stores.Secrets.BulkDeleteAutoPaging()` method removed
-- Removed types: `StoreDeleteResponse`, `StoreDeleteResponseEnvelopeResultInfo`, `StoreSecretDeleteResponse`, `StoreSecretDeleteResponseStatus`, `StoreSecretBulkDeleteResponse` (old shape), `StoreSecretBulkDeleteResponseStatus`, `StoreSecretDeleteResponseEnvelopeResultInfo`
-- `StoreNewParams` restructured (old `StoreNewParamsBody` removed)
-- `StoreSecretBulkDeleteParams` restructured
-
-### Stream - AudioTracks Return Type Change
-
-The `AudioTracks.Get()` method now returns a dedicated response type instead of a paginated list. The `GetAutoPaging()` method has been removed:
-
-- `Get()` returns `*AudioTrackGetResponse` instead of `*pagination.SinglePage[Audio]`
-- `GetAutoPaging()` method removed
-
-### Stream - Clip Type Removal and Return Type Change
-
-The `Clip.New()` method now returns the shared `Video` type. The following types have been entirely removed:
-
-- `Clip`, `ClipPlayback`, `ClipStatus`, `ClipWatermark`
-
-### Stream - Copy and Clip Params Field Removals
-
-- `ClipNewParams.MaxDurationSeconds`, `ThumbnailTimestampPct`, `Watermark` removed
-- `CopyNewParams.ThumbnailTimestampPct`, `Watermark` removed
-
-### Stream - Download and Webhook Changes
-
-- `DownloadNewResponseStatus` type removed
-- `WebhookUpdateResponse` and `WebhookGetResponse` changed from `interface{}` type aliases to full struct types
-
-### Zero Trust - Access AI Control MCP Portal Union Types Removed
-
-The following union interface types have been removed:
-
-- `AccessAIControlMcpPortalListResponseServersUpdatedPromptsUnion`
-- `AccessAIControlMcpPortalListResponseServersUpdatedToolsUnion`
-- `AccessAIControlMcpPortalReadResponseServersUpdatedPromptsUnion`
-- `AccessAIControlMcpPortalReadResponseServersUpdatedToolsUnion`
+### Please ensure you read through the list of changes below before moving to this version - this will help you understand any down or upstream issues it may cause to your environments.
 
 ---
 
-## Features
+### Breaking Changes
 
-### Vulnerability Scanner (`client.VulnerabilityScanner`)
+See the [v7.0.0 Migration Guide](./docs/migration-guides/v7.0.0-migration-guide.md) for before/after code examples and actions needed for each change.
 
-- **NEW SERVICE**: Full vulnerability scanning management
-    - `CredentialSets` - CRUD for credential sets (`New`, `Update`, `List`, `Delete`, `Edit`, `Get`)
-        - `Credentials` - Manage credentials within sets (`New`, `Update`, `List`, `Delete`, `Edit`, `Get`)
-    - `Scans` - Create and manage vulnerability scans (`New`, `List`, `Get`)
-    - `TargetEnvironments` - Manage scan target environments (`New`, `Update`, `List`, `Delete`, `Edit`, `Get`)
+#### AI Search - SearchForAgents Metadata Removed
 
-### AI Search - Namespaces (`client.AISearch.Namespaces`)
+The `SearchForAgents` nested type has been removed from all instance metadata structs. This field is no longer part of the API specification.
 
-- **NEW SERVICE**: Namespace-scoped AI Search management
-    - `New()`, `Update()`, `List()`, `Delete()`, `ChatCompletions()`, `Read()`, `Search()`
-    - `Instances` - Namespace-scoped instances (`New`, `Update`, `List`, `Delete`, `ChatCompletions`, `Read`, `Search`, `Stats`)
-        - `Jobs` - Instance job management (`New`, `Update`, `List`, `Get`, `Logs`)
-        - `Items` - Instance item management (`List`, `Delete`, `Chunks`, `NewOrUpdate`, `Download`, `Get`, `Logs`, `Sync`, `Upload`)
+**Removed Types:**
+- `InstanceNewResponseMetadataSearchForAgents`
+- `InstanceUpdateResponseMetadataSearchForAgents`
+- `InstanceListResponseMetadataSearchForAgents`
+- `InstanceDeleteResponseMetadataSearchForAgents`
+- `InstanceReadResponseMetadataSearchForAgents`
+- `InstanceNewParamsMetadataSearchForAgents`
+- `InstanceUpdateParamsMetadataSearchForAgents`
+- `NamespaceInstanceNewResponseMetadataSearchForAgents`
+- `NamespaceInstanceUpdateResponseMetadataSearchForAgents`
+- `NamespaceInstanceListResponseMetadataSearchForAgents`
+- `NamespaceInstanceDeleteResponseMetadataSearchForAgents`
+- `NamespaceInstanceReadResponseMetadataSearchForAgents`
+- `NamespaceInstanceNewParamsMetadataSearchForAgents`
+- `NamespaceInstanceUpdateParamsMetadataSearchForAgents`
 
-### Browser Rendering - Devtools (`client.BrowserRendering.Devtools`)
+#### Email Security - Path Parameter Type Changes (`int64` to `string`)
 
-- **NEW SERVICE**: DevTools protocol browser control
-    - `Session` - List and get devtools sessions
-    - `Browser` - Browser lifecycle management (`New`, `Delete`, `Connect`, `Launch`, `Protocol`, `Version`)
-        - `Page` - Get page by target ID
-        - `Targets` - Manage browser targets (`New`, `List`, `Activate`, `Get`)
+Multiple Email Security settings sub-resources have changed their path parameter types from `int64` to `string`. This affects `Delete`, `Edit`, and `Get` methods across the following services:
 
-### Registrar (`client.Registrar`)
+- `AllowPolicies` (`policyID int64` -> `policyID string`)
+- `BlockSenders` (`patternID int64` -> `patternID string`)
+- `Domains` (`domainID int64` -> `domainID string`)
+- `ImpersonationRegistry` (`displayNameID int64` -> `impersonationRegistryID string`)
+- `TrustedDomains` (`trustedDomainID int64` -> `trustedDomainID string`)
 
-- **NEW**: Domain check and search endpoints
-    - `Check()` - POST `/accounts/{account_id}/registrar/domain-check`
-    - `Search()` - GET `/accounts/{account_id}/registrar/domain-search`
-- **NEW**: Registration management (`client.Registrar.Registrations`)
-    - `New()`, `List()`, `Edit()`, `Get()`
-- `RegistrationStatus.Get()` - Get registration workflow status
-- `UpdateStatus.Get()` - Get update workflow status
+#### Email Security - Investigate Parameter Rename
 
-### Cache - Origin Cloud Regions (`client.Cache.OriginCloudRegions`)
+The `Investigate.Get`, `Investigate.Move.New`, and `Investigate.Reclassify.New` methods now use `investigateID` instead of `postfixID` as the path parameter name.
 
-- **NEW SERVICE**: Manage origin cloud region configurations
-    - `New()`, `List()`, `Delete()`, `BulkDelete()`, `BulkEdit()`, `Edit()`, `Get()`, `SupportedRegions()`
+#### Email Security - Domains BulkDelete Method Removed
 
-### Zero Trust - DLP Settings (`client.ZeroTrust.DLP.Settings`)
+The `SettingDomainService.BulkDelete` method and its associated types have been removed:
 
-- **NEW SERVICE**: DLP settings management
-    - `Update()`, `Delete()`, `Edit()`, `Get()`
+- `SettingDomainBulkDeleteResponse`
+- `SettingDomainBulkDeleteParams`
 
-### Radar
+#### Email Security - TrustedDomains Return Type Change
 
-- `AgentReadiness.Summary()` - Agent readiness summary by dimension
-- `AI.MarkdownForAgents.Summary()` - Markdown-for-agents summary
-- `AI.MarkdownForAgents.Timeseries()` - Markdown-for-agents timeseries
+`SettingTrustedDomainService.New` now returns `*SettingTrustedDomainNewResponse` instead of `*SettingTrustedDomainNewResponseUnion`.
 
-### IAM (`client.IAM`)
+#### Email Security - Investigate.Move Return Type Change
 
-- `UserGroups.Members.Get()` - Get details of a specific member in a user group
-- `UserGroups.Members.NewAutoPaging()` - Auto-paging variant for adding members
-- `UserGroups.NewParams.Policies` changed from required to optional
+`InvestigateMoveService.New` now returns `*pagination.SinglePage[InvestigateMoveNewResponse]` instead of `*[]InvestigateMoveNewResponse`.
 
-### Bot Management
+#### Workers - Observability Telemetry Filter Restructuring
 
-- `ContentBotsProtection` field added to `BotFightModeConfiguration` and `SubscriptionConfiguration` (block/disabled)
+The observability telemetry filter parameter types have been restructured to support nested filter groups. New discriminated union types replace the previous flat filter arrays:
+
+- `ObservabilityTelemetryKeysParams.Filters` now accepts `FiltersObjectFilterUnion` (was `[]interface{}`)
+- `ObservabilityTelemetryQueryParams.Parameters.Filters` now accepts `FiltersObjectFilterUnion`
+- `ObservabilityTelemetryValuesParams.Filters` now accepts `FiltersObjectFilterUnion`
+
+New types include `FiltersObjectFiltersObject` (for group filters with `FilterCombination`) and `FiltersWorkersObservabilityFilterLeaf` (for leaf filters with typed `Operation`, `Type`, and `Value` fields).
 
 ---
 
-## Deprecations
+### Features
+
+#### Organizations (`client.Organizations`)
+
+- **NEW SERVICE**: `client.Organizations.Logs.Audit` -- query organization audit logs
+  - `List()` - Retrieve audit logs with cursor-based pagination
+
+#### Browser Rendering (`client.BrowserRendering`)
+
+- `client.BrowserRendering.Devtools.Browser.Targets.Close()` -- close a specific browser target (tab, page) by ID
+
+#### Queues (`client.Queues`)
+
+- `client.Queues.GetMetrics()` -- retrieve queue metrics for a specific queue
+
+#### AI Search (`client.AISearch`)
+
+- Added `WaitForCompletion` parameter to `NamespaceInstanceItemNewOrUpdateParams` and `NamespaceInstanceItemSyncParams` for synchronous indexing confirmation
+
+---
+
+### Bug Fixes
+
+- **Magic Transit**: `ConnectorService.List` parameter name corrected from `query` to `params` (non-functional, affects generated documentation only)
+
+---
+
+### Deprecations
 
 None in this release.
 
----
+## 6.10.0 (2026-04-30)
 
-## Bug Fixes
+Full Changelog: [v6.9.0...v6.10.0](https://github.com/cloudflare/cloudflare-go/compare/v6.9.0...v6.10.0)
 
-- **Testing**: CONTRIBUTING.md updated to reference [steady](https://github.com/dgellow/steady) instead of Prism for running tests against OpenAPI specs
+### Features
+
+* chore: skip failing tests for dns.records and workers.beta.workers ([7a0e81a](https://github.com/cloudflare/cloudflare-go/commit/7a0e81a3d0b35586aff492662030ca7ac55813f2))
+* chore: skip failing tests for email_security.settings and workers.observability.telemetry ([99087f0](https://github.com/cloudflare/cloudflare-go/commit/99087f0e7673f6a1e0770106346921a7b3017845))
+* chore: skip fraud.update test (HTTP 422 from prism) ([66e973a](https://github.com/cloudflare/cloudflare-go/commit/66e973a47bdcbfadd40f099bb196469a6e7c256d))
+* feat: add organization audit logs endpoint ([976f3aa](https://github.com/cloudflare/cloudflare-go/commit/976f3aa77a2a8f38d2bea17edca5e739d353f031))
+* feat(queues): add queues metrics endpoint ([4bf792b](https://github.com/cloudflare/cloudflare-go/commit/4bf792b174f27cf6c63bb0a05ce861e0958063ab))
+
+
+### Chores
+
+* **api:** update composite API spec ([9630892](https://github.com/cloudflare/cloudflare-go/commit/9630892c5eb5783423dcdae86e73194109ec2b3a))
+* **api:** update composite API spec ([ff702fa](https://github.com/cloudflare/cloudflare-go/commit/ff702fabe5cb0afc475544f198ee3cbd3b1786af))
+* **api:** update composite API spec ([39d7ea5](https://github.com/cloudflare/cloudflare-go/commit/39d7ea543a377f84e79ac135dc531d3a57e46f16))
+* **api:** update composite API spec ([9336a98](https://github.com/cloudflare/cloudflare-go/commit/9336a9837b858f42c88d288a3272284379b60195))
+* **api:** update composite API spec ([1d96672](https://github.com/cloudflare/cloudflare-go/commit/1d966724dc1be3105e85e21f4a8aed8edda97f4e))
+* **api:** update composite API spec ([9c64268](https://github.com/cloudflare/cloudflare-go/commit/9c642682e2e86bb4fcce36a38b033d0d175dddf1))
+* **api:** update composite API spec ([9c7c8be](https://github.com/cloudflare/cloudflare-go/commit/9c7c8bee485005aba8859919818da39aee48b0b2))
+* **api:** update composite API spec ([1c968ed](https://github.com/cloudflare/cloudflare-go/commit/1c968edc5d1bb96659cf8966d73c5ccb9e45bc8c))
+* **api:** update composite API spec ([9a1dce7](https://github.com/cloudflare/cloudflare-go/commit/9a1dce7c2041c0c0490573555abacdb755f2a07e))
+* **api:** update composite API spec ([f4525f3](https://github.com/cloudflare/cloudflare-go/commit/f4525f3a1f0d2755b3a936dc6420a84a3f2e055a))
+* sync repo ([3f039ba](https://github.com/cloudflare/cloudflare-go/commit/3f039ba50b0ac57763a269955eb76dfffaf42a52))
 
 ## 6.9.0 (2026-04-01)
 
