@@ -1,5 +1,32 @@
 # Changelog
 
+## 6.10.0 (2026-04-30)
+
+Full Changelog: [v6.9.0...v6.10.0](https://github.com/cloudflare/cloudflare-go/compare/v6.9.0...v6.10.0)
+
+### Features
+
+* chore: skip failing tests for dns.records and workers.beta.workers ([7a0e81a](https://github.com/cloudflare/cloudflare-go/commit/7a0e81a3d0b35586aff492662030ca7ac55813f2))
+* chore: skip failing tests for email_security.settings and workers.observability.telemetry ([99087f0](https://github.com/cloudflare/cloudflare-go/commit/99087f0e7673f6a1e0770106346921a7b3017845))
+* chore: skip fraud.update test (HTTP 422 from prism) ([66e973a](https://github.com/cloudflare/cloudflare-go/commit/66e973a47bdcbfadd40f099bb196469a6e7c256d))
+* feat: add organization audit logs endpoint ([976f3aa](https://github.com/cloudflare/cloudflare-go/commit/976f3aa77a2a8f38d2bea17edca5e739d353f031))
+* feat(queues): add queues metrics endpoint ([4bf792b](https://github.com/cloudflare/cloudflare-go/commit/4bf792b174f27cf6c63bb0a05ce861e0958063ab))
+
+
+### Chores
+
+* **api:** update composite API spec ([9630892](https://github.com/cloudflare/cloudflare-go/commit/9630892c5eb5783423dcdae86e73194109ec2b3a))
+* **api:** update composite API spec ([ff702fa](https://github.com/cloudflare/cloudflare-go/commit/ff702fabe5cb0afc475544f198ee3cbd3b1786af))
+* **api:** update composite API spec ([39d7ea5](https://github.com/cloudflare/cloudflare-go/commit/39d7ea543a377f84e79ac135dc531d3a57e46f16))
+* **api:** update composite API spec ([9336a98](https://github.com/cloudflare/cloudflare-go/commit/9336a9837b858f42c88d288a3272284379b60195))
+* **api:** update composite API spec ([1d96672](https://github.com/cloudflare/cloudflare-go/commit/1d966724dc1be3105e85e21f4a8aed8edda97f4e))
+* **api:** update composite API spec ([9c64268](https://github.com/cloudflare/cloudflare-go/commit/9c642682e2e86bb4fcce36a38b033d0d175dddf1))
+* **api:** update composite API spec ([9c7c8be](https://github.com/cloudflare/cloudflare-go/commit/9c7c8bee485005aba8859919818da39aee48b0b2))
+* **api:** update composite API spec ([1c968ed](https://github.com/cloudflare/cloudflare-go/commit/1c968edc5d1bb96659cf8966d73c5ccb9e45bc8c))
+* **api:** update composite API spec ([9a1dce7](https://github.com/cloudflare/cloudflare-go/commit/9a1dce7c2041c0c0490573555abacdb755f2a07e))
+* **api:** update composite API spec ([f4525f3](https://github.com/cloudflare/cloudflare-go/commit/f4525f3a1f0d2755b3a936dc6420a84a3f2e055a))
+* sync repo ([3f039ba](https://github.com/cloudflare/cloudflare-go/commit/3f039ba50b0ac57763a269955eb76dfffaf42a52))
+
 ## 6.9.0 (2026-04-01)
 
 Full Changelog: [v6.8.0...v6.9.0](https://github.com/cloudflare/cloudflare-go/compare/v6.8.0...v6.9.0)
