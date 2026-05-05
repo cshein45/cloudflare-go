@@ -67,23 +67,14 @@ type AccessLogAccessRequestListParams struct {
 	CountryCodeOp param.Field[AccessLogAccessRequestListParamsCountryCodeOp] `query:"country_codeOp"`
 	// The chronological sorting order for the logs.
 	Direction param.Field[AccessLogAccessRequestListParamsDirection] `query:"direction"`
-	// Filter by user email. Match mode is controlled by `emailOp` (preferred) or the
-	// legacy `email_exact` flag.
-	//
-	//   - Default (no `emailOp`, `email_exact=false` or unset): substring match —
-	//     `email=@example.com` returns all events with that domain.
-	//   - Exact match: set `emailOp=eq` (preferred) or `email_exact=true` — e.g.
-	//     `email=user@example.com&email_exact=true` returns only that user.
-	//   - Explicit substring match: set `emailOp=contains` (without `email_exact=true`).
-	//     When both are set, `email_exact=true` takes precedence and the match is exact.
-	//   - Exclusion: set `emailOp=neq`. With `email_exact=true` this is an exact-value
-	//     exclusion; without it, a fuzzy substring exclusion.
+	// Filter by user email. Defaults to substring matching. To force exact matching,
+	// set `email_exact=true`. Example (default): `email=@example.com` returns all
+	// events with that domain. Example (exact):
+	// `email=user@example.com&email_exact=true` returns only that user.
 	Email param.Field[string] `query:"email" format:"email"`
 	// When true, `email` is matched exactly instead of substring matching.
 	EmailExact param.Field[bool] `query:"email_exact"`
-	// Operator for the `email` filter. `contains` performs a substring
-	// (case-sensitive) match. When `email_exact=true` is also set, `email_exact` takes
-	// precedence and `contains` is ignored.
+	// Operator for the `email` filter.
 	EmailOp param.Field[AccessLogAccessRequestListParamsEmailOp] `query:"emailOp"`
 	// Comma-separated list of fields to include in the response. When omitted, all
 	// fields are returned.
@@ -104,11 +95,9 @@ type AccessLogAccessRequestListParams struct {
 	Since param.Field[time.Time] `query:"since" format:"date-time"`
 	// The latest event timestamp to query.
 	Until param.Field[time.Time] `query:"until" format:"date-time"`
-	// Deprecated. Accepted for backward compatibility but no longer applied as a
-	// filter. Use `email` instead.
+	// Filter by user UUID.
 	UserID param.Field[string] `query:"user_id" format:"uuid"`
-	// Deprecated. Accepted for backward compatibility but no longer applied as a
-	// filter (the `user_id` parameter is itself deprecated).
+	// Operator for the `user_id` filter.
 	UserIDOp param.Field[AccessLogAccessRequestListParamsUserIDOp] `query:"user_idOp"`
 }
 
@@ -201,20 +190,17 @@ func (r AccessLogAccessRequestListParamsDirection) IsKnown() bool {
 	return false
 }
 
-// Operator for the `email` filter. `contains` performs a substring
-// (case-sensitive) match. When `email_exact=true` is also set, `email_exact` takes
-// precedence and `contains` is ignored.
+// Operator for the `email` filter.
 type AccessLogAccessRequestListParamsEmailOp string
 
 const (
-	AccessLogAccessRequestListParamsEmailOpEq       AccessLogAccessRequestListParamsEmailOp = "eq"
-	AccessLogAccessRequestListParamsEmailOpNeq      AccessLogAccessRequestListParamsEmailOp = "neq"
-	AccessLogAccessRequestListParamsEmailOpContains AccessLogAccessRequestListParamsEmailOp = "contains"
+	AccessLogAccessRequestListParamsEmailOpEq  AccessLogAccessRequestListParamsEmailOp = "eq"
+	AccessLogAccessRequestListParamsEmailOpNeq AccessLogAccessRequestListParamsEmailOp = "neq"
 )
 
 func (r AccessLogAccessRequestListParamsEmailOp) IsKnown() bool {
 	switch r {
-	case AccessLogAccessRequestListParamsEmailOpEq, AccessLogAccessRequestListParamsEmailOpNeq, AccessLogAccessRequestListParamsEmailOpContains:
+	case AccessLogAccessRequestListParamsEmailOpEq, AccessLogAccessRequestListParamsEmailOpNeq:
 		return true
 	}
 	return false
@@ -268,8 +254,7 @@ func (r AccessLogAccessRequestListParamsRayIDOp) IsKnown() bool {
 	return false
 }
 
-// Deprecated. Accepted for backward compatibility but no longer applied as a
-// filter (the `user_id` parameter is itself deprecated).
+// Operator for the `user_id` filter.
 type AccessLogAccessRequestListParamsUserIDOp string
 
 const (
