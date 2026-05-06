@@ -2,7 +2,7 @@
 
 ## 6.10.0 (2026-05-06)
 
-Full Changelog: [v6.9.0...v6.10.0](https://github.com/cloudflare/cloudflare-go/compare/v6.9.0...v6.10.0)
+Full Changelog: [v6.10.0...v7.0.0](https://github.com/cloudflare/cloudflare-go/compare/v6.10.0...v7.0.0)
 
 ### Features
 
