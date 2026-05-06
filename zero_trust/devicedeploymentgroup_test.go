@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package zones_test
+package zero_trust_test
 
 import (
 	"context"
@@ -11,10 +11,11 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/internal/testutil"
 	"github.com/cloudflare/cloudflare-go/v6/option"
-	"github.com/cloudflare/cloudflare-go/v6/zones"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 )
 
-func TestZoneNewWithOptionalParams(t *testing.T) {
+func TestDeviceDeploymentGroupNewWithOptionalParams(t *testing.T) {
+	t.Skip("HTTP 401 error from prism")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -28,12 +29,14 @@ func TestZoneNewWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("144c9defac04969c7bfad8efaa8ea194"),
 		option.WithAPIEmail("user@example.com"),
 	)
-	_, err := client.Zones.New(context.TODO(), zones.ZoneNewParams{
-		Account: cloudflare.F(zones.ZoneNewParamsAccount{
-			ID: cloudflare.F("023e105f4ecef8ad9ca31a8372d0c353"),
-		}),
-		Name: cloudflare.F("example.com"),
-		Type: cloudflare.F(zones.TypeFull),
+	_, err := client.ZeroTrust.Devices.DeploymentGroups.New(context.TODO(), zero_trust.DeviceDeploymentGroupNewParams{
+		AccountID: cloudflare.F("account_id"),
+		Name:      cloudflare.F("Engineering Ring 0"),
+		VersionConfig: cloudflare.F([]zero_trust.DeviceDeploymentGroupNewParamsVersionConfig{{
+			TargetEnvironment: cloudflare.F("windows"),
+			Version:           cloudflare.F("2026.5.234.0"),
+		}}),
+		PolicyIDs: cloudflare.F([]string{"string"}),
 	})
 	if err != nil {
 		var apierr *cloudflare.Error
@@ -44,7 +47,8 @@ func TestZoneNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestZoneListWithOptionalParams(t *testing.T) {
+func TestDeviceDeploymentGroupListWithOptionalParams(t *testing.T) {
+	t.Skip("HTTP 401 error from prism")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -58,19 +62,10 @@ func TestZoneListWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("144c9defac04969c7bfad8efaa8ea194"),
 		option.WithAPIEmail("user@example.com"),
 	)
-	_, err := client.Zones.List(context.TODO(), zones.ZoneListParams{
-		Account: cloudflare.F(zones.ZoneListParamsAccount{
-			ID:   cloudflare.F("id"),
-			Name: cloudflare.F("name"),
-		}),
-		Direction: cloudflare.F(zones.ZoneListParamsDirectionDesc),
-		Match:     cloudflare.F(zones.ZoneListParamsMatchAny),
-		Name:      cloudflare.F("name"),
-		Order:     cloudflare.F(zones.ZoneListParamsOrderStatus),
-		Page:      cloudflare.F(1.000000),
-		PerPage:   cloudflare.F(5.000000),
-		Status:    cloudflare.F(zones.ZoneListParamsStatusInitializing),
-		Type:      cloudflare.F([]zones.ZoneListParamsType{zones.ZoneListParamsTypeFull}),
+	_, err := client.ZeroTrust.Devices.DeploymentGroups.List(context.TODO(), zero_trust.DeviceDeploymentGroupListParams{
+		AccountID: cloudflare.F("account_id"),
+		Page:      cloudflare.F(int64(1)),
+		PerPage:   cloudflare.F(int64(1)),
 	})
 	if err != nil {
 		var apierr *cloudflare.Error
@@ -81,8 +76,8 @@ func TestZoneListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestZoneDelete(t *testing.T) {
-	t.Skip("body parameter is required")
+func TestDeviceDeploymentGroupDelete(t *testing.T) {
+	t.Skip("HTTP 401 error from prism")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -96,9 +91,13 @@ func TestZoneDelete(t *testing.T) {
 		option.WithAPIKey("144c9defac04969c7bfad8efaa8ea194"),
 		option.WithAPIEmail("user@example.com"),
 	)
-	_, err := client.Zones.Delete(context.TODO(), zones.ZoneDeleteParams{
-		ZoneID: cloudflare.F("023e105f4ecef8ad9ca31a8372d0c353"),
-	})
+	_, err := client.ZeroTrust.Devices.DeploymentGroups.Delete(
+		context.TODO(),
+		"group_id",
+		zero_trust.DeviceDeploymentGroupDeleteParams{
+			AccountID: cloudflare.F("account_id"),
+		},
+	)
 	if err != nil {
 		var apierr *cloudflare.Error
 		if errors.As(err, &apierr) {
@@ -108,7 +107,8 @@ func TestZoneDelete(t *testing.T) {
 	}
 }
 
-func TestZoneEditWithOptionalParams(t *testing.T) {
+func TestDeviceDeploymentGroupEditWithOptionalParams(t *testing.T) {
+	t.Skip("HTTP 401 error from prism")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -122,12 +122,19 @@ func TestZoneEditWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("144c9defac04969c7bfad8efaa8ea194"),
 		option.WithAPIEmail("user@example.com"),
 	)
-	_, err := client.Zones.Edit(context.TODO(), zones.ZoneEditParams{
-		ZoneID:            cloudflare.F("023e105f4ecef8ad9ca31a8372d0c353"),
-		Paused:            cloudflare.F(true),
-		Type:              cloudflare.F(zones.ZoneEditParamsTypeFull),
-		VanityNameServers: cloudflare.F([]string{"ns1.example.com", "ns2.example.com"}),
-	})
+	_, err := client.ZeroTrust.Devices.DeploymentGroups.Edit(
+		context.TODO(),
+		"group_id",
+		zero_trust.DeviceDeploymentGroupEditParams{
+			AccountID: cloudflare.F("account_id"),
+			Name:      cloudflare.F("Engineering Ring 0"),
+			PolicyIDs: cloudflare.F([]string{"string"}),
+			VersionConfig: cloudflare.F([]zero_trust.DeviceDeploymentGroupEditParamsVersionConfig{{
+				TargetEnvironment: cloudflare.F("windows"),
+				Version:           cloudflare.F("2026.5.234.0"),
+			}}),
+		},
+	)
 	if err != nil {
 		var apierr *cloudflare.Error
 		if errors.As(err, &apierr) {
@@ -137,7 +144,8 @@ func TestZoneEditWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestZoneGet(t *testing.T) {
+func TestDeviceDeploymentGroupGet(t *testing.T) {
+	t.Skip("HTTP 401 error from prism")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -151,9 +159,13 @@ func TestZoneGet(t *testing.T) {
 		option.WithAPIKey("144c9defac04969c7bfad8efaa8ea194"),
 		option.WithAPIEmail("user@example.com"),
 	)
-	_, err := client.Zones.Get(context.TODO(), zones.ZoneGetParams{
-		ZoneID: cloudflare.F("023e105f4ecef8ad9ca31a8372d0c353"),
-	})
+	_, err := client.ZeroTrust.Devices.DeploymentGroups.Get(
+		context.TODO(),
+		"group_id",
+		zero_trust.DeviceDeploymentGroupGetParams{
+			AccountID: cloudflare.F("account_id"),
+		},
+	)
 	if err != nil {
 		var apierr *cloudflare.Error
 		if errors.As(err, &apierr) {

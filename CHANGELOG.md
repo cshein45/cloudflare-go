@@ -1,137 +1,43 @@
 # Changelog
 
-## 7.0.0 (2026-04-30)
+## 6.10.0 (2026-05-06)
 
 Full Changelog: [v6.10.0...v7.0.0](https://github.com/cloudflare/cloudflare-go/compare/v6.10.0...v7.0.0)
 
-This is a major version release that includes breaking changes to three packages: `ai_search`, `email_security`, and `workers`. These changes reflect upstream API specification updates that improve type correctness and consistency. Non-breaking features and updates are also included across several other packages.
-
-### Please ensure you read through the list of changes below before moving to this version - this will help you understand any down or upstream issues it may cause to your environments.
-
----
-
-### Breaking Changes
-
-See the [v7.0.0 Migration Guide](./docs/migration-guides/v7.0.0-migration-guide.md) for before/after code examples and actions needed for each change.
-
-#### AI Search - SearchForAgents Metadata Removed
-
-The `SearchForAgents` nested type has been removed from all instance metadata structs. This field is no longer part of the API specification.
-
-**Removed Types:**
-- `InstanceNewResponseMetadataSearchForAgents`
-- `InstanceUpdateResponseMetadataSearchForAgents`
-- `InstanceListResponseMetadataSearchForAgents`
-- `InstanceDeleteResponseMetadataSearchForAgents`
-- `InstanceReadResponseMetadataSearchForAgents`
-- `InstanceNewParamsMetadataSearchForAgents`
-- `InstanceUpdateParamsMetadataSearchForAgents`
-- `NamespaceInstanceNewResponseMetadataSearchForAgents`
-- `NamespaceInstanceUpdateResponseMetadataSearchForAgents`
-- `NamespaceInstanceListResponseMetadataSearchForAgents`
-- `NamespaceInstanceDeleteResponseMetadataSearchForAgents`
-- `NamespaceInstanceReadResponseMetadataSearchForAgents`
-- `NamespaceInstanceNewParamsMetadataSearchForAgents`
-- `NamespaceInstanceUpdateParamsMetadataSearchForAgents`
-
-#### Email Security - Path Parameter Type Changes (`int64` to `string`)
-
-Multiple Email Security settings sub-resources have changed their path parameter types from `int64` to `string`. This affects `Delete`, `Edit`, and `Get` methods across the following services:
-
-- `AllowPolicies` (`policyID int64` -> `policyID string`)
-- `BlockSenders` (`patternID int64` -> `patternID string`)
-- `Domains` (`domainID int64` -> `domainID string`)
-- `ImpersonationRegistry` (`displayNameID int64` -> `impersonationRegistryID string`)
-- `TrustedDomains` (`trustedDomainID int64` -> `trustedDomainID string`)
-
-#### Email Security - Investigate Parameter Rename
-
-The `Investigate.Get`, `Investigate.Move.New`, and `Investigate.Reclassify.New` methods now use `investigateID` instead of `postfixID` as the path parameter name.
-
-#### Email Security - Domains BulkDelete Method Removed
-
-The `SettingDomainService.BulkDelete` method and its associated types have been removed:
-
-- `SettingDomainBulkDeleteResponse`
-- `SettingDomainBulkDeleteParams`
-
-#### Email Security - TrustedDomains Return Type Change
-
-`SettingTrustedDomainService.New` now returns `*SettingTrustedDomainNewResponse` instead of `*SettingTrustedDomainNewResponseUnion`.
-
-#### Email Security - Investigate.Move Return Type Change
-
-`InvestigateMoveService.New` now returns `*pagination.SinglePage[InvestigateMoveNewResponse]` instead of `*[]InvestigateMoveNewResponse`.
-
-#### Workers - Observability Telemetry Filter Restructuring
-
-The observability telemetry filter parameter types have been restructured to support nested filter groups. New discriminated union types replace the previous flat filter arrays:
-
-- `ObservabilityTelemetryKeysParams.Filters` now accepts `FiltersObjectFilterUnion` (was `[]interface{}`)
-- `ObservabilityTelemetryQueryParams.Parameters.Filters` now accepts `FiltersObjectFilterUnion`
-- `ObservabilityTelemetryValuesParams.Filters` now accepts `FiltersObjectFilterUnion`
-
-New types include `FiltersObjectFiltersObject` (for group filters with `FilterCombination`) and `FiltersWorkersObservabilityFilterLeaf` (for leaf filters with typed `Operation`, `Type`, and `Value` fields).
-
----
-
 ### Features
 
-#### Organizations (`client.Organizations`)
-
-- **NEW SERVICE**: `client.Organizations.Logs.Audit` -- query organization audit logs
-  - `List()` - Retrieve audit logs with cursor-based pagination
-
-#### Browser Rendering (`client.BrowserRendering`)
-
-- `client.BrowserRendering.Devtools.Browser.Targets.Close()` -- close a specific browser target (tab, page) by ID
-
-#### Queues (`client.Queues`)
-
-- `client.Queues.GetMetrics()` -- retrieve queue metrics for a specific queue
-
-#### AI Search (`client.AISearch`)
-
-- Added `WaitForCompletion` parameter to `NamespaceInstanceItemNewOrUpdateParams` and `NamespaceInstanceItemSyncParams` for synchronous indexing confirmation
-
----
-
-### Bug Fixes
-
-- **Magic Transit**: `ConnectorService.List` parameter name corrected from `query` to `params` (non-functional, affects generated documentation only)
-
----
-
-### Deprecations
-
-None in this release.
-
-## 6.10.0 (2026-04-30)
-
-Full Changelog: [v6.9.0...v6.10.0](https://github.com/cloudflare/cloudflare-go/compare/v6.9.0...v6.10.0)
-
-### Features
-
-* chore: skip failing tests for dns.records and workers.beta.workers ([7a0e81a](https://github.com/cloudflare/cloudflare-go/commit/7a0e81a3d0b35586aff492662030ca7ac55813f2))
-* chore: skip failing tests for email_security.settings and workers.observability.telemetry ([99087f0](https://github.com/cloudflare/cloudflare-go/commit/99087f0e7673f6a1e0770106346921a7b3017845))
-* chore: skip fraud.update test (HTTP 422 from prism) ([66e973a](https://github.com/cloudflare/cloudflare-go/commit/66e973a47bdcbfadd40f099bb196469a6e7c256d))
-* feat: add organization audit logs endpoint ([976f3aa](https://github.com/cloudflare/cloudflare-go/commit/976f3aa77a2a8f38d2bea17edca5e739d353f031))
-* feat(queues): add queues metrics endpoint ([4bf792b](https://github.com/cloudflare/cloudflare-go/commit/4bf792b174f27cf6c63bb0a05ce861e0958063ab))
+* chore: skip failing deployment_groups tests ([#4282](https://github.com/cloudflare/cloudflare-go/issues/4282)) ([af12b26](https://github.com/cloudflare/cloudflare-go/commit/af12b266b67124d42aec8dd473111db49a126a57))
+* chore: skip failing tests for dns.records and workers.beta.workers ([240fba0](https://github.com/cloudflare/cloudflare-go/commit/240fba08b4ef87e756bb2d63dfb58cdd7da4c7d3))
+* chore: skip failing tests for email_security.settings and workers.observability.telemetry ([43d77b2](https://github.com/cloudflare/cloudflare-go/commit/43d77b2ebf13f9c692b7a1adeaf85367d27a4ec0))
+* chore: skip fraud.update test (HTTP 422 from prism) ([8adcf22](https://github.com/cloudflare/cloudflare-go/commit/8adcf225a6d66d6d381598a9020cd2bbf4a4b35a))
+* feat: add organization audit logs endpoint ([7264650](https://github.com/cloudflare/cloudflare-go/commit/7264650576a0ead8476e7693d71bc2d050b92fc2))
+* feat(queues): add queues metrics endpoint ([0285d04](https://github.com/cloudflare/cloudflare-go/commit/0285d048cc7f6be8dddf2f71c53761e7dabe5819))
+* **security_center:** update generated types and methods ([dd6fb99](https://github.com/cloudflare/cloudflare-go/commit/dd6fb997f2af76dccfe323947633a82ddfc68a5a))
+* **zero_trust_device_deployment_groups:** add zero_trust_device_deployment_groups resource ([#4281](https://github.com/cloudflare/cloudflare-go/issues/4281)) ([11daf46](https://github.com/cloudflare/cloudflare-go/commit/11daf4653659e337563c4f4f29586e7846df1411))
 
 
 ### Chores
 
-* **api:** update composite API spec ([9630892](https://github.com/cloudflare/cloudflare-go/commit/9630892c5eb5783423dcdae86e73194109ec2b3a))
-* **api:** update composite API spec ([ff702fa](https://github.com/cloudflare/cloudflare-go/commit/ff702fabe5cb0afc475544f198ee3cbd3b1786af))
-* **api:** update composite API spec ([39d7ea5](https://github.com/cloudflare/cloudflare-go/commit/39d7ea543a377f84e79ac135dc531d3a57e46f16))
-* **api:** update composite API spec ([9336a98](https://github.com/cloudflare/cloudflare-go/commit/9336a9837b858f42c88d288a3272284379b60195))
-* **api:** update composite API spec ([1d96672](https://github.com/cloudflare/cloudflare-go/commit/1d966724dc1be3105e85e21f4a8aed8edda97f4e))
-* **api:** update composite API spec ([9c64268](https://github.com/cloudflare/cloudflare-go/commit/9c642682e2e86bb4fcce36a38b033d0d175dddf1))
-* **api:** update composite API spec ([9c7c8be](https://github.com/cloudflare/cloudflare-go/commit/9c7c8bee485005aba8859919818da39aee48b0b2))
-* **api:** update composite API spec ([1c968ed](https://github.com/cloudflare/cloudflare-go/commit/1c968edc5d1bb96659cf8966d73c5ccb9e45bc8c))
-* **api:** update composite API spec ([9a1dce7](https://github.com/cloudflare/cloudflare-go/commit/9a1dce7c2041c0c0490573555abacdb755f2a07e))
-* **api:** update composite API spec ([f4525f3](https://github.com/cloudflare/cloudflare-go/commit/f4525f3a1f0d2755b3a936dc6420a84a3f2e055a))
-* sync repo ([3f039ba](https://github.com/cloudflare/cloudflare-go/commit/3f039ba50b0ac57763a269955eb76dfffaf42a52))
+* **ai_search:** update generated types and methods ([c8c8524](https://github.com/cloudflare/cloudflare-go/commit/c8c8524b235a348171a3a744e0f7498b645a7784))
+* **api:** update composite API spec ([dc5fd9b](https://github.com/cloudflare/cloudflare-go/commit/dc5fd9b34ab9492c752d39a673d639e2604e9ef2))
+* **api:** update composite API spec ([78653bc](https://github.com/cloudflare/cloudflare-go/commit/78653bc81d630619dd2a08e45feaa47e7ab53e1d))
+* **api:** update composite API spec ([a5cfc46](https://github.com/cloudflare/cloudflare-go/commit/a5cfc46cc26148339759ca8dc6df96f4a4c5d1e7))
+* **api:** update composite API spec ([5b3ab0a](https://github.com/cloudflare/cloudflare-go/commit/5b3ab0af0b07a194a00b328765f1f197a778beb8))
+* **api:** update composite API spec ([34ed80e](https://github.com/cloudflare/cloudflare-go/commit/34ed80efcfa908a6922c049752e535950ac3b878))
+* **api:** update composite API spec ([30ebdc3](https://github.com/cloudflare/cloudflare-go/commit/30ebdc33bd1189577ec50ce5c67ccd6314dd9832))
+* **api:** update composite API spec ([2abd1bb](https://github.com/cloudflare/cloudflare-go/commit/2abd1bbba76eba79f67afe2d866d643dd24b5f09))
+* **api:** update composite API spec ([1921bc7](https://github.com/cloudflare/cloudflare-go/commit/1921bc7cd51af69c1945929d6270c39750ed667f))
+* **api:** update composite API spec ([853be0e](https://github.com/cloudflare/cloudflare-go/commit/853be0efc97477a2431ac851265645fe71af5e39))
+* **api:** update composite API spec ([e2fb4a1](https://github.com/cloudflare/cloudflare-go/commit/e2fb4a1f505e701214f406ad69756c01728c1279))
+* **billing:** update generated types and methods ([f92cc05](https://github.com/cloudflare/cloudflare-go/commit/f92cc05e2b8791db055bbcaa4ff8c3bceccce1d4))
+* **ci:** add breaking change back ([#4279](https://github.com/cloudflare/cloudflare-go/issues/4279)) ([f29df83](https://github.com/cloudflare/cloudflare-go/commit/f29df83f2c1dd8b117258f6d17d11d59f98e4265))
+* **email_security:** update generated types and methods ([af03891](https://github.com/cloudflare/cloudflare-go/commit/af03891f4873afa137326f7806f294303da9ab90))
+* **intel:** update generated types and methods ([d500a81](https://github.com/cloudflare/cloudflare-go/commit/d500a8181d46ba4787874cd6778658f255dd9c64))
+* **radar:** update generated types and methods ([95b1b37](https://github.com/cloudflare/cloudflare-go/commit/95b1b37b8eb32b2cbd3d11e006bacb790f9ce90a))
+* sync repo ([788d726](https://github.com/cloudflare/cloudflare-go/commit/788d726331a63a195417394a375b3f29403b4671))
+* sync shared codegen files from staging-next ([b8f86ea](https://github.com/cloudflare/cloudflare-go/commit/b8f86ea92a7d5e6472ed35ab869c7281a985509e))
+* **zero_trust:** update generated types and methods ([5d8ddfb](https://github.com/cloudflare/cloudflare-go/commit/5d8ddfb54fbf4fb78ebba46e07f95d48cc520256))
+* **zones:** sync codegen changes ([3998a55](https://github.com/cloudflare/cloudflare-go/commit/3998a55dba6d4e1c5f721375c86ce8dc1881c4d8))
 
 ## 6.9.0 (2026-04-01)
 
